@@ -16,6 +16,7 @@
             height: 100vh;
             padding: 20px;
             box-sizing: border-box;
+            overflow: auto; /* Enable scrolling for the PDF */
         }
 
         #questionContainer {
@@ -43,9 +44,7 @@
 </head>
 <body>
     <div id="pdfViewer">
-        <object data="MTP_11.pdf" type="application/pdf" width="100%" height="100%">
-            <p>PDF cannot be displayed. <a href="path/to/your/pdf/file.pdf" target="_blank">Download PDF</a> instead.</p>
-        </object>
+        <embed src="MTP_7.pdf" type="application/pdf" width="100%" height="100%">
     </div>
     <div id="questionContainer">
         <h3>OMR Sheet Response</h3>
