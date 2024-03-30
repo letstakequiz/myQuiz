@@ -65,7 +65,7 @@ function hideLoader() {
 }
 
 function openPDF() {
-    const pdfUrl = "MTP_11.pdf";
+    const pdfUrl = "MTP_7.pdf";
     const embedElement = document.createElement("embed");
     embedElement.src = pdfUrl;
     embedElement.type = "application/pdf";
