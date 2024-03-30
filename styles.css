@@ -1,48 +1,91 @@
 body {
     font-family: Arial, sans-serif;
-    margin: 20px;
+    margin: 0;
+    padding: 0;
+    background-color: #f8f9fa; /* Light background color */
 }
 
-.container {
-    display: flex;
-    justify-content: space-between;
+.container-fluid {
+    padding: 20px;
 }
 
-.questions {
-    width: 60%;
+.text-center {
+    text-align: center;
+}
+
+.btn-primary {
+    background-color: #007BFF;
+    border-color: #007BFF;
 }
 
 .pdfViewerContainer {
-    width: 70%;  /* Adjusted width to 70% */
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 10px;
+    height: 900px;
+    overflow-y: scroll;
 }
 
-form {
-    width: 100%;
+.pdfViewer {
+    height: 100%;
 }
 
-h2, h3 {
+#timer {
+    font-size: 24px;
     margin-bottom: 20px;
 }
 
-label {
-    display: block;
-    margin-bottom: 10px;
+.loader {
+    border: 16px solid #f3f3f3; /* Light grey */
+    border-top: 16px solid #3498db; /* Blue */
+    border-radius: 50%;
+    width: 120px;
+    height: 120px;
+    animation: spin 2s linear infinite;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin-top: -60px;
+    margin-left: -60px;
 }
 
-input[type="radio"] {
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.btn-group-toggle label.btn {
+    padding: 10px 20px;
+    font-weight: bold;
+    border-radius: 5px;
+    background-color: #f8f9fa;
+    border: 1px solid #ccc;
     margin-right: 10px;
 }
 
-input[type="button"] {
-    padding: 10px 20px;
-    background-color: #007BFF;
-    color: white;
-    border: none;
-    cursor: pointer;
+.btn-group-toggle label.btn input[type="radio"] {
+    display: none;
 }
 
-#pdfViewer {
-    display: block;
-    width: 100%;  /* Set width to 100% */
-    height: 800px;  /* Increased height */
+.btn-group-toggle label.btn.active {
+    background-color: #007BFF;
+    color: white;
+}
+
+
+
+.question label {
+    margin-right: 5px;
+}
+.btn-group-toggle label.btn:not(.active):hover {
+    background-color: #007BFF;
+    color: white;
+}
+
+.btn-block {
+    width: 100%;
 }
