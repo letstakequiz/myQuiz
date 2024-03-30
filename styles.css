@@ -1,91 +1,53 @@
 body {
     font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 0;
-    background-color: #f8f9fa; /* Light background color */
+    margin: 20px;
 }
 
 .container-fluid {
-    padding: 20px;
+    padding: 0 15px;
 }
 
-.text-center {
+.row {
+    display: flex;
+    flex-wrap: wrap;
+    margin-right: -15px;
+    margin-left: -15px;
+}
+
+.col-md-3, .col-md-9 {
+    position: relative;
+    width: 100%;
+    padding-right: 15px;
+    padding-left: 15px;
+}
+
+@media (min-width: 768px) {
+    .col-md-3 {
+        flex: 0 0 25%;
+        max-width: 25%;
+    }
+    .col-md-9 {
+        flex: 0 0 75%;
+        max-width: 75%;
+    }
+}
+
+button {
+    margin: 5px;
+    padding: 5px 10px;
+    border: none;
+    background-color: #007BFF;
+    color: white;
+    cursor: pointer;
+}
+
+#pdfContainer {
+    width: 100%;
+    max-width: 800px;
+    margin: 20px auto;
     text-align: center;
 }
 
-.btn-primary {
-    background-color: #007BFF;
-    border-color: #007BFF;
-}
-
-.pdfViewerContainer {
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    padding: 10px;
-    height: 900px;
-    overflow-y: scroll;
-}
-
-.pdfViewer {
-    height: 100%;
-}
-
-#timer {
-    font-size: 24px;
-    margin-bottom: 20px;
-}
-
-.loader {
-    border: 16px solid #f3f3f3; /* Light grey */
-    border-top: 16px solid #3498db; /* Blue */
-    border-radius: 50%;
-    width: 120px;
-    height: 120px;
-    animation: spin 2s linear infinite;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    margin-top: -60px;
-    margin-left: -60px;
-}
-
-@keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-}
-
-.form-group {
-    margin-bottom: 20px;
-}
-
-.btn-group-toggle label.btn {
-    padding: 10px 20px;
-    font-weight: bold;
-    border-radius: 5px;
-    background-color: #f8f9fa;
-    border: 1px solid #ccc;
-    margin-right: 10px;
-}
-
-.btn-group-toggle label.btn input[type="radio"] {
-    display: none;
-}
-
-.btn-group-toggle label.btn.active {
-    background-color: #007BFF;
-    color: white;
-}
-
-
-
-.question label {
-    margin-right: 5px;
-}
-.btn-group-toggle label.btn:not(.active):hover {
-    background-color: #007BFF;
-    color: white;
-}
-
-.btn-block {
-    width: 100%;
+#controls {
+    text-align: center;
 }
