@@ -1,14 +1,15 @@
 document.addEventListener("DOMContentLoaded", function() {
     const questionContainer = document.getElementById("questionContainer");
-    
+
     for (let i = 1; i <= 25; i++) {
         const questionDiv = document.createElement("div");
+        questionDiv.classList.add("question");
         questionDiv.innerHTML = `
-            <h6>Q${i} : 
-            A <input type="radio" name="q${i}" value="A">
-            B <input type="radio" name="q${i}" value="B">
-            C <input type="radio" name="q${i}" value="C">
-            D <input type="radio" name="q${i}" value="D">
+            <h6>Q${i} :
+            <label><input type="radio" name="q${i}" value="A"> A</label>
+            <label><input type="radio" name="q${i}" value="B"> B</label>
+            <label><input type="radio" name="q${i}" value="C"> C</label>
+            <label><input type="radio" name="q${i}" value="D"> D</label>
             </h6>
         `;
         questionContainer.appendChild(questionDiv);
@@ -18,6 +19,7 @@ document.addEventListener("DOMContentLoaded", function() {
     openPDF();
 });
 
+
 function submitForm() {
     const formData = {};
 
@@ -26,7 +28,7 @@ function submitForm() {
     }
 
     generateCSV(formData);
-   
+
 }
 
 function getSelectedOption(name) {
@@ -40,7 +42,7 @@ function getSelectedOption(name) {
 }
 
 function generateCSV(data) {
-    const csvContent = "Question,Response\n" + 
+    const csvContent = "Question,Response\n" +
                        Object.keys(data).map(key => `"${key}","${data[key]}"`).join("\n");
 
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
@@ -71,7 +73,7 @@ function openPDF() {
     embedElement.type = "application/pdf";
     embedElement.width = "100%";
     embedElement.height = "800px";
-    
+
     const pdfViewer = document.getElementById("pdfViewer");
     pdfViewer.innerHTML = "";
     pdfViewer.appendChild(embedElement);
