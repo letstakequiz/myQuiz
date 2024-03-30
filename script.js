@@ -67,7 +67,7 @@ function hideLoader() {
 }
 
 function openPDF() {
-    const pdfUrl = "MTP_7.pdf";
+    const pdfUrl = "MTP_11.pdf";
     const iframeElement = document.createElement("iframe");
     iframeElement.src = pdfUrl;
     iframeElement.width = "100%";
