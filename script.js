@@ -68,17 +68,18 @@ function hideLoader() {
 
 function openPDF() {
     const pdfUrl = "MTP_7.pdf";
-    const embedElement = document.createElement("embed");
-    embedElement.src = pdfUrl;
-    embedElement.type = "application/pdf";
-    embedElement.width = "100%";
-    embedElement.height = "800px";
+    const iframeElement = document.createElement("iframe");
+    iframeElement.src = pdfUrl;
+    iframeElement.width = "100%";
+    iframeElement.height = "900px";
+    iframeElement.style.border = "none"; // Optional: Remove border
 
     const pdfViewer = document.getElementById("pdfViewer");
     pdfViewer.innerHTML = "";
-    pdfViewer.appendChild(embedElement);
+    pdfViewer.appendChild(iframeElement);
 
-    embedElement.onload = function() {
+    // Hide the loader once the PDF is loaded
+    iframeElement.onload = function() {
         hideLoader();
     };
 }
