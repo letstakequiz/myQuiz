@@ -67,19 +67,12 @@ function hideLoader() {
 }
 
 function openPDF() {
-    const pdfUrl = "MTP_7.pdf";
-    const objectElement = document.createElement("object");
-    objectElement.data = pdfUrl;
-    objectElement.type = "application/pdf";
-    objectElement.width = "100%";
-    objectElement.height = "900px";
-
+    const pdfUrl = "MTP_11.pdf";
     const pdfViewer = document.getElementById("pdfViewer");
-    pdfViewer.innerHTML = "";
-    pdfViewer.appendChild(objectElement);
-
-    // Hide the loader once the PDF is loaded
-    objectElement.onload = function() {
-        hideLoader();
-    };
+    pdfViewer.innerHTML = `
+        <object data="${pdfUrl}" type="application/pdf" width="100%" height="900px">
+            <p>PDF cannot be displayed. <a href="${pdfUrl}" target="_blank">Download PDF</a> instead.</p>
+        </object>
+    `;
+    hideLoader();
 }
