@@ -67,19 +67,19 @@ function hideLoader() {
 }
 
 function openPDF() {
-    const pdfUrl = "MTP_11.pdf";
-    const iframeElement = document.createElement("iframe");
-    iframeElement.src = pdfUrl;
-    iframeElement.width = "100%";
-    iframeElement.height = "900px";
-    iframeElement.style.border = "none"; // Optional: Remove border
+    const pdfUrl = "MTP_7.pdf";
+    const objectElement = document.createElement("object");
+    objectElement.data = pdfUrl;
+    objectElement.type = "application/pdf";
+    objectElement.width = "100%";
+    objectElement.height = "900px";
 
     const pdfViewer = document.getElementById("pdfViewer");
     pdfViewer.innerHTML = "";
-    pdfViewer.appendChild(iframeElement);
+    pdfViewer.appendChild(objectElement);
 
     // Hide the loader once the PDF is loaded
-    iframeElement.onload = function() {
+    objectElement.onload = function() {
         hideLoader();
     };
 }
