@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>MTP QUIZ</title>
+    <title>Quiz OMR Sheet</title>
     <style>
         body {
             display: flex;
@@ -55,17 +55,7 @@
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.8.335/pdf.min.js"></script>
-    <!-- Include EmailJS library -->
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
-    <script type="text/javascript">
-        (function() {
-            // Initialize EmailJS with your user ID
-            emailjs.init({
-              publicKey: "c4SpcESPkuhk8FLHP",
-            });
-        })();
-    </script>
-
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/..."></script>
     <script>
         // Specify worker source
         pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.8.335/pdf.worker.min.js';
@@ -123,23 +113,17 @@
         });
 
         function submitForm() {
-            console.log("Submit Form :");
             const formData = {};
             let correctAnswers = 0;
             let incorrectAnswers = 0;
             let notSelected = 0;
-            let incorrectResponses = [];
 
             // Fetch the answer CSV file
-            console.log("Submit Form Fetch :");
             fetch('answer.csv')
                 .then(response => response.text())
                 .then(data => {
-                    // Parse the CSV data
-                    console.log(data);
                     const rows = data.split('\n');
                     const answers = {};
-                    console.log("Submit Form rows:");
                     rows.forEach(row => {
                         const [question, answer] = row.split(',');
                         if (question && answer) {
@@ -147,7 +131,8 @@
                         }
                     });
 
-                    // Calculate the score and prepare the incorrect and not selected responses
+                    // Calculate the score and prepare the responses
+                    const results = [];
                     for (let i = 1; i <= 25; i++) {
                         const questionNumber = `Question ${i}`;
                         formData[questionNumber] = getSelectedOption(`q${i}`);
@@ -160,12 +145,13 @@
                             notSelected++;
                         } else {
                             incorrectAnswers++;
-                            incorrectResponses.push({
-                                Question: questionNumber,
-                                SelectedAnswer: selectedAnswer,
-                                CorrectAnswer: correctAnswer
-                            });
                         }
+
+                        results.push({
+                            Question: questionNumber,
+                            SelectedAnswer: selectedAnswer,
+                            CorrectAnswer: correctAnswer
+                        });
                     }
 
                     const totalQuestions = 25;
@@ -174,35 +160,11 @@
                     // Display the results
                     alert(`You scored ${score.toFixed(2)}%. Correct Answers: ${correctAnswers}, Incorrect Answers: ${incorrectAnswers}, Not Selected: ${notSelected}`);
 
-                    // Send email with wrong answers included in the message
-                    emailjs.send("service_40fn9tr", "template_8mmf27k", {
-                        from_name: "Quiz Result",
-                        to_name: "Girish",
-                        message: `
-                            You scored ${score.toFixed(2)}%.
-                            Incorrect Answers: ${incorrectResponses.map(response => response.Question).join(", ")},
-                            Not Selected: ${Array.from({ length: notSelected }, (_, i) => `Question ${correctAnswers + incorrectAnswers + i + 1}`).join(", ")},
-                            Correct Answers: ${Array.from({ length: correctAnswers }, (_, i) => `Question ${i + 1}`).join(", ")}
-                        `,
-                        reply_to: "gvs.bunny@gmail.com",
-                        email: "gvs.bunny@gmail.com"
-                    }).then(
-                        function(response) {
-                            console.log("Email sent successfully:", response);
-                        },
-                        function(error) {
-                            console.error("Email failed to send:", error);
-                        }
-                    );
+                    // Generate and save the results CSV
+                    generateResultsCSV(results);
 
-                    // Generate and save the incorrect and not selected responses CSV
-                    generateResultsCSV(incorrectResponses.concat(
-                        Array.from({ length: notSelected }, (_, i) => ({
-                            Question: `Question ${correctAnswers + incorrectAnswers + i + 1}`,
-                            SelectedAnswer: 'Not Selected',
-                            CorrectAnswer: 'Not Selected'
-                        }))
-                    ));
+                    // Send email with results
+                    sendEmail(results);
                 })
                 .catch(error => {
                     console.error('Error reading answer.csv:', error);
@@ -233,6 +195,28 @@
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
+        }
+
+        function sendEmail(results) {
+            const emailContent = "Question,Selected Answer,Correct Answer\n" +
+                results.map(result => `"${result.Question}","${result.SelectedAnswer}","${result.CorrectAnswer}"`).join("\n");
+
+            const serviceID = 'your_service_id';
+            const templateID = 'your_template_id';
+            const userID = 'your_user_id';
+
+            emailjs.send(serviceID, templateID, {
+                from_name: "Quiz Result",
+                to_name: "Recipient Name",
+                message: emailContent,
+                reply_to: "gvs.bunny@gmail.com",
+                email: "gvs.bunny@gmail.com"
+            }, userID)
+                .then(function (response) {
+                    console.log("Email sent successfully:", response);
+                }, function (error) {
+                    console.error("Email failed to send:", error);
+                });
         }
     </script>
 </body>
