@@ -171,6 +171,15 @@
             alert('Error reading answer.csv. Please try again.');
         });
 }
+function getSelectedOption(questionName) {
+    const options = document.getElementsByName(questionName);
+    for (let i = 0; i < options.length; i++) {
+        if (options[i].checked) {
+            return options[i].value;
+        }
+    }
+    return "Not Selected";
+}
 
 
     </script>
