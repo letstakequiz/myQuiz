@@ -19,11 +19,6 @@
             overflow: auto; /* Enable scrolling for the PDF */
         }
 
-        #pdfCanvas {
-            display: block;
-            margin-bottom: 20px;
-        }
-
         #questionContainer {
             width: 30%;
             padding: 20px;
@@ -89,10 +84,57 @@
             }).catch(function(error) {
                 console.error("Error loading PDF:", error);
             });
+
+            // Generate quiz questions
+            const questionContainer = document.getElementById("questions");
+            for (let i = 1; i <= 25; i++) {
+                const questionDiv = document.createElement("div");
+                questionDiv.classList.add("question");
+                questionDiv.innerHTML = `
+                    <h6>Q${i} :
+                    <label><input type="radio" name="q${i}" value="A"> A</label>
+                    <label><input type="radio" name="q${i}" value="B"> B</label>
+                    <label><input type="radio" name="q${i}" value="C"> C</label>
+                    <label><input type="radio" name="q${i}" value="D"> D</label>
+                    </h6>
+                `;
+                questionContainer.appendChild(questionDiv);
+            }
         });
 
         function submitForm() {
-            // Your form submission logic here
+            const formData = {};
+
+            for (let i = 1; i <= 25; i++) {
+                formData[`Question ${i}`] = getSelectedOption(`q${i}`);
+            }
+
+            generateCSV(formData);
+        }
+
+        function getSelectedOption(name) {
+            const options = document.getElementsByName(name);
+            for (let i = 0; i < options.length; i++) {
+                if (options[i].checked) {
+                    return options[i].value;
+                }
+            }
+            return "Not Selected";
+        }
+
+        function generateCSV(data) {
+            const csvContent = "Question,Response\n" +
+                               Object.keys(data).map(key => `"${key}","${data[key]}"`).join("\n");
+
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement("a");
+            link.setAttribute("href", url);
+            link.setAttribute("download", "OMR_Responses.csv");
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
         }
     </script>
 </body>
