@@ -164,36 +164,26 @@
             const totalQuestions = 25;
             const score = (correctAnswers / totalQuestions) * 100;
 
+            // Send email with results
+            sendEmail(results)
+                .then(() => {
+                    // Display the results
+                    alert(`You scored ${score.toFixed(2)}%. Correct Answers: ${correctAnswers}, Incorrect Answers: ${incorrectAnswers}, Not Selected: ${notSelected}`);
 
-              // Send email with results
-           // sendEmail(results);
-
-              // Generate and save the results CSV
-           // generateResultsCSV(results);
-
-            // Display the results
-          //  alert(`You scored ${score.toFixed(2)}%. Correct Answers: ${correctAnswers}, Incorrect Answers: ${incorrectAnswers}, Not Selected: ${notSelected}`);
-
-     sendEmail(results).then(() => {
-   
-    // Display the results
-    alert(`You scored ${score.toFixed(2)}%. Correct Answers: ${correctAnswers}, Incorrect Answers: ${incorrectAnswers}, Not Selected: ${notSelected}`);
-
-         // Generate and save the results CSV
-    generateResultsCSV(results);
-
-         
-     }).catch(error => {
-    console.error('Error sending email:', error);
-    alert('Error sending email. Please try again.',error);
-});
-          
+                    // Generate and save the results CSV
+                    generateResultsCSV(results);
+                })
+                .catch(error => {
+                    console.error('Error sending email:', error);
+                    alert('Error sending email. Please try again.');
+                });
         })
         .catch(error => {
             console.error('Error reading answer.csv:', error);
             alert('Error reading answer.csv. Please try again.');
         });
 }
+
 
 
 
