@@ -63,8 +63,7 @@
               publicKey: "c4SpcESPkuhk8FLHP",
             });
         })();
-    </script>
-    <script>
+
         // Specify worker source
         pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.8.335/pdf.worker.min.js';
 
@@ -173,8 +172,6 @@
 
                     // Generate and save the results CSV
                     generateResultsCSV(results);
-
-                   
                 })
                 .catch(error => {
                     console.error('Error reading answer.csv:', error);
@@ -208,29 +205,26 @@
         }
 
         function sendEmail(results) {
-    const emailContent = "Question,Selected Answer,Correct Answer\n" +
-        results.map(result => `"${result.Question}","${result.SelectedAnswer}","${result.CorrectAnswer}"`).join("\n");
+            const emailContent = "Question,Selected Answer,Correct Answer\n" +
+                results.map(result => `"${result.Question}","${result.SelectedAnswer}","${result.CorrectAnswer}"`).join("\n");
 
-    const serviceID = 'service_40fn9tr';
-    const templateID = 'template_8mmf27k';
+            const serviceID = 'service_40fn9tr';
+            const templateID = 'template_8mmf27k';
 
-    // Construct template parameters
-    const templateParams = {
+            const templateParams = {
         to_name: 'Sir/Madam', // Example name
         message: emailContent, // Use the email content here
     };
 
-    // Send email using EmailJS
-    emailjs.send(serviceID, templateID, templateParams).then(
-        (response) => {
-            console.log('SUCCESS!', response.status, response.text);
-        },
-        (error) => {
-            console.log('FAILED...', error);
+            emailjs.send(serviceID, templateID, templateParams).then(
+                (response) => {
+                    console.log('SUCCESS!', response.status, response.text);
+                },
+                (error) => {
+                    console.log('FAILED...', error);
+                }
+            );
         }
-    );
-}
-
     </script>
 </body>
 </html>
