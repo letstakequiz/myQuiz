@@ -112,14 +112,14 @@
         });
 
         function submitForm() {
-            console.log("Submit Form :");
+    console.log("Submit Form :");
     const formData = {};
     let correctAnswers = 0;
     let incorrectAnswers = 0;
     let notSelected = 0;
 
     // Fetch the answer CSV file
-             console.log("Submit Form Fetch :");
+    console.log("Submit Form Fetch :");
     fetch('answer.csv')
         .then(response => response.text())
         .then(data => {
@@ -127,7 +127,7 @@
             console.log(data);
             const rows = data.split('\n');
             const answers = {};
-             console.log("Submit Form rows:");
+            console.log("Submit Form rows:");
             rows.forEach(row => {
                 const [question, answer] = row.split(',');
                 if (question && answer) {
@@ -163,6 +163,22 @@
             // Display the results
             alert(`You scored ${score.toFixed(2)}%. Correct Answers: ${correctAnswers}, Incorrect Answers: ${incorrectAnswers}, Not Selected: ${notSelected}`);
 
+            // Send email with wrong answers included in the message
+            emailjs.send("service_40fn9tr", "template_8mmf27k", {
+                from_name: "Quiz Result",
+                to_name: "Girish",
+                message: `You scored ${score.toFixed(2)}%. Incorrect Answers: ${incorrectResponses.map(response => response.Question).join(", ")}`,
+                reply_to: "gvs.bunny@gmail.com",
+                email: document.getElementById("email").value
+            }).then(
+                function(response) {
+                    console.log("Email sent successfully:", response);
+                },
+                function(error) {
+                    console.error("Email failed to send:", error);
+                }
+            );
+
             // Generate and save the incorrect and not selected responses CSV
             generateResultsCSV([...incorrectResponses, ...Array.from({ length: notSelected }, (_, i) => ({ Question: `Question ${i + 1}`, SelectedAnswer: 'Not Selected', CorrectAnswer: 'Not Selected' }))]);
         })
@@ -171,6 +187,7 @@
             alert('Error reading answer.csv. Please try again.');
         });
 }
+
 function getSelectedOption(questionName) {
     const options = document.getElementsByName(questionName);
     for (let i = 0; i < options.length; i++) {
