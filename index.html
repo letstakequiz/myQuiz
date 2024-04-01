@@ -55,7 +55,15 @@
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.8.335/pdf.min.js"></script>
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/..."></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+    <script type="text/javascript">
+        (function() {
+            // https://dashboard.emailjs.com/admin/account
+            emailjs.init({
+              publicKey: "c4SpcESPkuhk8FLHP",
+            });
+        })();
+    </script>
     <script>
         // Specify worker source
         pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.8.335/pdf.worker.min.js';
@@ -198,26 +206,29 @@
         }
 
         function sendEmail(results) {
-            const emailContent = "Question,Selected Answer,Correct Answer\n" +
-                results.map(result => `"${result.Question}","${result.SelectedAnswer}","${result.CorrectAnswer}"`).join("\n");
+    const emailContent = "Question,Selected Answer,Correct Answer\n" +
+        results.map(result => `"${result.Question}","${result.SelectedAnswer}","${result.CorrectAnswer}"`).join("\n");
 
-            const serviceID = 'your_service_id';
-            const templateID = 'your_template_id';
-            const userID = 'your_user_id';
+    const serviceID = 'service_40fn9tr';
+    const templateID = 'template_8mmf27k';
 
-            emailjs.send(serviceID, templateID, {
-                from_name: "Quiz Result",
-                to_name: "Recipient Name",
-                message: emailContent,
-                reply_to: "gvs.bunny@gmail.com",
-                email: "gvs.bunny@gmail.com"
-            }, userID)
-                .then(function (response) {
-                    console.log("Email sent successfully:", response);
-                }, function (error) {
-                    console.error("Email failed to send:", error);
-                });
+    // Construct template parameters
+    const templateParams = {
+        to_name: 'Sir/Madam', // Example name
+        message: emailContent, // Use the email content here
+    };
+
+    // Send email using EmailJS
+    emailjs.send(serviceID, templateID, templateParams).then(
+        (response) => {
+            console.log('SUCCESS!', response.status, response.text);
+        },
+        (error) => {
+            console.log('FAILED...', error);
         }
+    );
+}
+
     </script>
 </body>
 </html>
