@@ -112,39 +112,85 @@
         });
 
         function submitForm() {
-            const formData = {};
+      const formData = {};
+      let correctAnswers = 0;
+      let incorrectAnswers = 0;
+      let notSelected = 0;
 
-            for (let i = 1; i <= 25; i++) {
-                formData[`Question ${i}`] = getSelectedOption(`q${i}`);
-            }
+      // Fetch the answer CSV file
+      fetch('answer.csv')
+          .then(response => response.text())
+          .then(data => {
+              // Parse the CSV data
+              const rows = data.split('\n');
+              const answers = {};
+              rows.forEach(row => {
+                  const [question, answer] = row.split(',');
+                  answers[question.trim()] = answer.trim();
+              });
 
-            generateCSV(formData);
-        }
+              // Calculate the score and prepare the incorrect and not selected responses
+              const incorrectResponses = [];
+              for (let i = 1; i <= 25; i++) {
+                  const questionNumber = `Question ${i}`;
+                  formData[questionNumber] = getSelectedOption(`q${i}`);
+                  const selectedAnswer = formData[questionNumber];
+                  const correctAnswer = answers[questionNumber];
 
-        function getSelectedOption(name) {
-            const options = document.getElementsByName(name);
-            for (let i = 0; i < options.length; i++) {
-                if (options[i].checked) {
-                    return options[i].value;
-                }
-            }
-            return "Not Selected";
-        }
+                  if (selectedAnswer === correctAnswer) {
+                      correctAnswers++;
+                  } else if (selectedAnswer === 'Not Selected') {
+                      notSelected++;
+                  } else {
+                      incorrectAnswers++;
+                      incorrectResponses.push({
+                          Question: questionNumber,
+                          SelectedAnswer: selectedAnswer,
+                          CorrectAnswer: correctAnswer
+                      });
+                  }
+              }
 
-        function generateCSV(data) {
-            const csvContent = "Question,Response\n" +
-                               Object.keys(data).map(key => `"${key}","${data[key]}"`).join("\n");
+              const totalQuestions = 25;
+              const score = (correctAnswers / totalQuestions) * 100;
 
-            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-            const url = URL.createObjectURL(blob);
-            const link = document.createElement("a");
-            link.setAttribute("href", url);
-            link.setAttribute("download", "OMR_Responses.csv");
-            link.style.visibility = 'hidden';
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-        }
+              // Display the results
+              alert(`You scored ${score.toFixed(2)}%. Correct Answers: ${correctAnswers}, Incorrect Answers: ${incorrectAnswers}, Not Selected: ${notSelected}`);
+
+              // Generate and save the incorrect and not selected responses CSV
+              generateResultsCSV([...incorrectResponses, ...Array.from({ length: notSelected }, (_, i) => ({ Question: `Question ${i + 1}`, SelectedAnswer: 'Not Selected', CorrectAnswer: 'Not Selected' }))]);
+          })
+          .catch(error => {
+              console.error('Error reading answer.csv:', error);
+              alert('Error reading answer.csv. Please try again.');
+          });
+  }
+
+  function generateResultsCSV(results) {
+      const csvContent = "Question,Selected Answer,Correct Answer\n" +
+                         results.map(result => `${result.Question},${result.SelectedAnswer},${result.CorrectAnswer}`).join("\n");
+
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.setAttribute("href", url);
+      link.setAttribute("download", "QuizResults.csv");
+      link.style.visibility = 'hidden';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+  }
+
+  function getSelectedOption(name) {
+      const options = document.getElementsByName(name);
+      for (let i = 0; i < options.length; i++) {
+          if (options[i].checked) {
+              return options[i].value;
+          }
+      }
+      return "Not Selected";
+  }
+
     </script>
 </body>
 </html>
