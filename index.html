@@ -164,9 +164,6 @@
             const totalQuestions = 25;
             const score = (correctAnswers / totalQuestions) * 100;
 
-            const resultsDiv = document.getElementById('results');
-            resultsDiv.innerHTML = `You scored ${score.toFixed(2)}%. Correct Answers: ${correctAnswers}, Incorrect Answers: ${incorrectAnswers}, Not Selected: ${notSelected}`;
-
 
               // Send email with results
             sendEmail(results);
