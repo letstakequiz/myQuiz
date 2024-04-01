@@ -215,7 +215,7 @@
             document.body.removeChild(link);
         }
 
-        function sendEmail(results) {
+        function sendEmail1(results) {
             const emailContent = "Question,Selected Answer,Correct Answer\n" +
                 results.map(result => `"${result.Question}","${result.SelectedAnswer}","${result.CorrectAnswer}"`).join("\n");
 
@@ -240,6 +240,32 @@
                 }
             );
         }
+        function sendEmail(results) {
+    return new Promise((resolve, reject) => {
+        const emailContent = "Question,Selected Answer,Correct Answer\n" +
+            results.map(result => `"${result.Question}","${result.SelectedAnswer}","${result.CorrectAnswer}"`).join("\n");
+
+        const serviceID = 'service_40fn9tr';
+        const templateID = 'template_8mmf27k';
+
+        const templateParams = {
+            to_name: 'Sir/Madam', // Example name
+            message: emailContent, // Use the email content here
+        };
+
+        emailjs.send(serviceID, templateID, templateParams).then(
+            (response) => {
+                console.log('SUCCESS!', response.status, response.text);
+                resolve(); // Resolve the promise when email is sent successfully
+            },
+            (error) => {
+                console.log('FAILED...', error);
+                reject(error); // Reject the promise if there's an error sending the email
+            }
+        );
+    });
+}
+
     </script>
 </body>
 </html>
