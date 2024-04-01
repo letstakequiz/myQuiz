@@ -56,10 +56,10 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.8.335/pdf.min.js"></script>
     <!-- Include EmailJS library -->
-<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
-<script type="text/javascript">
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+    <script type="text/javascript">
         (function() {
-            // https://dashboard.emailjs.com/admin/account
+            // Initialize EmailJS with your user ID
             emailjs.init({
               publicKey: "c4SpcESPkuhk8FLHP",
             });
@@ -123,108 +123,117 @@
         });
 
         function submitForm() {
-    console.log("Submit Form :");
-    const formData = {};
-    let correctAnswers = 0;
-    let incorrectAnswers = 0;
-    let notSelected = 0;
+            console.log("Submit Form :");
+            const formData = {};
+            let correctAnswers = 0;
+            let incorrectAnswers = 0;
+            let notSelected = 0;
+            let incorrectResponses = [];
 
-    // Fetch the answer CSV file
-    console.log("Submit Form Fetch :");
-    fetch('answer.csv')
-        .then(response => response.text())
-        .then(data => {
-            // Parse the CSV data
-            console.log(data);
-            const rows = data.split('\n');
-            const answers = {};
-            console.log("Submit Form rows:");
-            rows.forEach(row => {
-                const [question, answer] = row.split(',');
-                if (question && answer) {
-                    answers[question.trim()] = answer.trim();
-                }
-            });
-
-            // Calculate the score and prepare the incorrect and not selected responses
-            const incorrectResponses = [];
-            for (let i = 1; i <= 25; i++) {
-                const questionNumber = `Question ${i}`;
-                formData[questionNumber] = getSelectedOption(`q${i}`);
-                const selectedAnswer = formData[questionNumber];
-                const correctAnswer = answers[questionNumber];
-
-                if (selectedAnswer === correctAnswer) {
-                    correctAnswers++;
-                } else if (selectedAnswer === 'Not Selected') {
-                    notSelected++;
-                } else {
-                    incorrectAnswers++;
-                    incorrectResponses.push({
-                        Question: questionNumber,
-                        SelectedAnswer: selectedAnswer,
-                        CorrectAnswer: correctAnswer
+            // Fetch the answer CSV file
+            console.log("Submit Form Fetch :");
+            fetch('answer.csv')
+                .then(response => response.text())
+                .then(data => {
+                    // Parse the CSV data
+                    console.log(data);
+                    const rows = data.split('\n');
+                    const answers = {};
+                    console.log("Submit Form rows:");
+                    rows.forEach(row => {
+                        const [question, answer] = row.split(',');
+                        if (question && answer) {
+                            answers[question.trim()] = answer.trim();
+                        }
                     });
+
+                    // Calculate the score and prepare the incorrect and not selected responses
+                    for (let i = 1; i <= 25; i++) {
+                        const questionNumber = `Question ${i}`;
+                        formData[questionNumber] = getSelectedOption(`q${i}`);
+                        const selectedAnswer = formData[questionNumber];
+                        const correctAnswer = answers[questionNumber];
+
+                        if (selectedAnswer === correctAnswer) {
+                            correctAnswers++;
+                        } else if (selectedAnswer === 'Not Selected') {
+                            notSelected++;
+                        } else {
+                            incorrectAnswers++;
+                            incorrectResponses.push({
+                                Question: questionNumber,
+                                SelectedAnswer: selectedAnswer,
+                                CorrectAnswer: correctAnswer
+                            });
+                        }
+                    }
+
+                    const totalQuestions = 25;
+                    const score = (correctAnswers / totalQuestions) * 100;
+
+                    // Display the results
+                    alert(`You scored ${score.toFixed(2)}%. Correct Answers: ${correctAnswers}, Incorrect Answers: ${incorrectAnswers}, Not Selected: ${notSelected}`);
+
+                    // Send email with wrong answers included in the message
+                    emailjs.send("service_40fn9tr", "template_8mmf27k", {
+                        from_name: "Quiz Result",
+                        to_name: "Girish",
+                        message: `
+                            You scored ${score.toFixed(2)}%.
+                            Incorrect Answers: ${incorrectResponses.map(response => response.Question).join(", ")},
+                            Not Selected: ${Array.from({ length: notSelected }, (_, i) => `Question ${correctAnswers + incorrectAnswers + i + 1}`).join(", ")},
+                            Correct Answers: ${Array.from({ length: correctAnswers }, (_, i) => `Question ${i + 1}`).join(", ")}
+                        `,
+                        reply_to: "gvs.bunny@gmail.com",
+                        email: "gvs.bunny@gmail.com"
+                    }).then(
+                        function(response) {
+                            console.log("Email sent successfully:", response);
+                        },
+                        function(error) {
+                            console.error("Email failed to send:", error);
+                        }
+                    );
+
+                    // Generate and save the incorrect and not selected responses CSV
+                    generateResultsCSV(incorrectResponses.concat(
+                        Array.from({ length: notSelected }, (_, i) => ({
+                            Question: `Question ${correctAnswers + incorrectAnswers + i + 1}`,
+                            SelectedAnswer: 'Not Selected',
+                            CorrectAnswer: 'Not Selected'
+                        }))
+                    ));
+                })
+                .catch(error => {
+                    console.error('Error reading answer.csv:', error);
+                    alert('Error reading answer.csv. Please try again.');
+                });
+        }
+
+        function getSelectedOption(questionName) {
+            const options = document.getElementsByName(questionName);
+            for (let i = 0; i < options.length; i++) {
+                if (options[i].checked) {
+                    return options[i].value;
                 }
             }
-
-            const totalQuestions = 25;
-            const score = (correctAnswers / totalQuestions) * 100;
-
-            // Display the results
-            alert(`You scored ${score.toFixed(2)}%. Correct Answers: ${correctAnswers}, Incorrect Answers: ${incorrectAnswers}, Not Selected: ${notSelected}`);
-
-            // Send email with wrong answers included in the message
-            emailjs.send("service_40fn9tr", "template_8mmf27k", {
-                from_name: "Quiz Result",
-                to_name: "Girish",
-                message: `You scored ${score.toFixed(2)}%. Incorrect Answers: ${incorrectResponses.map(response => response.Question).join(", ")}`,
-                reply_to: "gvs.bunny@gmail.com",
-                email: "gvs.bunny@gmail.com"
-            }).then(
-                function(response) {
-                    console.log("Email sent successfully:", response);
-                },
-                function(error) {
-                    console.error("Email failed to send:", error);
-                }
-            );
-
-            // Generate and save the incorrect and not selected responses CSV
-            generateResultsCSV([...incorrectResponses, ...Array.from({ length: notSelected }, (_, i) => ({ Question: `Question ${i + 1}`, SelectedAnswer: 'Not Selected', CorrectAnswer: 'Not Selected' }))]);
-        })
-        .catch(error => {
-            console.error('Error reading answer.csv:', error);
-            alert('Error reading answer.csv. Please try again.');
-        });
-}
-
-function getSelectedOption(questionName) {
-    const options = document.getElementsByName(questionName);
-    for (let i = 0; i < options.length; i++) {
-        if (options[i].checked) {
-            return options[i].value;
+            return "Not Selected";
         }
-    }
-    return "Not Selected";
-}
 
         function generateResultsCSV(results) {
-    const csvContent = "Question,Selected Answer,Correct Answer\n" +
-                       results.map(result => `"${result.Question}","${result.SelectedAnswer}","${result.CorrectAnswer}"`).join("\n");
+            const csvContent = "Question,Selected Answer,Correct Answer\n" +
+                results.map(result => `"${result.Question}","${result.SelectedAnswer}","${result.CorrectAnswer}"`).join("\n");
 
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    link.setAttribute("href", url);
-    link.setAttribute("download", "results.csv");
-    link.style.visibility = 'hidden';
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-}
-
-
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement("a");
+            link.setAttribute("href", url);
+            link.setAttribute("download", "results.csv");
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
     </script>
 </body>
 </html>
