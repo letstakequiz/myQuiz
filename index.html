@@ -53,6 +53,7 @@
         </div>
         <button id="submitBtn" onclick="submitForm()">Submit</button>
     </div>
+<div id="results"></div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.8.335/pdf.min.js"></script>
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
@@ -164,14 +165,20 @@
             const totalQuestions = 25;
             const score = (correctAnswers / totalQuestions) * 100;
 
-            // Display the results
-            alert(`You scored ${score.toFixed(2)}%. Correct Answers: ${correctAnswers}, Incorrect Answers: ${incorrectAnswers}, Not Selected: ${notSelected}`);
+            const resultsDiv = document.getElementById('results');
+            resultsDiv.innerHTML = `You scored ${score.toFixed(2)}%. Correct Answers: ${correctAnswers}, Incorrect Answers: ${incorrectAnswers}, Not Selected: ${notSelected}`;
 
-            // Generate and save the results CSV
+
+              // Send email with results
+            sendEmail(results);
+
+              // Generate and save the results CSV
             generateResultsCSV(results);
 
-            // Send email with results
-            sendEmail(results);
+            // Display the results
+         //   alert(`You scored ${score.toFixed(2)}%. Correct Answers: ${correctAnswers}, Incorrect Answers: ${incorrectAnswers}, Not Selected: ${notSelected}`);
+
+          
         })
         .catch(error => {
             console.error('Error reading answer.csv:', error);
