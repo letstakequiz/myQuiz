@@ -120,64 +120,61 @@
         });
 
         function submitForm() {
-            const formData = {};
-            let correctAnswers = 0;
-            let incorrectAnswers = 0;
-            let notSelected = 0;
+    const formData = {};
+    let correctAnswers = 0;
+    let incorrectAnswers = 0;
+    let notSelected = 0;
 
-            // Fetch the answer CSV file
-            fetch('answer.csv')
-                .then(response => response.text())
-                .then(data => {
-                    const rows = data.split('\n');
-                    const answers = {};
-                    rows.forEach(row => {
-                        const [question, answer] = row.split(',');
-                        if (question && answer) {
-                            answers[question.trim()] = answer.trim();
-                        }
-                    });
+    // Fetch the answer CSV file
+    fetch('answer.csv')
+        .then(response => response.text())
+        .then(data => {
+            const rows = data.split('\n');
+            const answers = {};
+            rows.forEach(row => {
+                const [question, answer] = row.split(',');
+                if (question && answer) {
+                    answers[question.trim()] = answer.trim();
+                }
+            });
 
-                    // Calculate the score and prepare the responses
-                    const results = [];
-                    for (let i = 1; i <= 25; i++) {
-                        const questionNumber = `Question ${i}`;
-                        formData[questionNumber] = getSelectedOption(`q${i}`);
-                        const selectedAnswer = formData[questionNumber];
-                        const correctAnswer = answers[questionNumber];
+            // Calculate the score and prepare the responses
+            const results = [];
+            for (let i = 1; i <= 25; i++) {
+                const questionNumber = `Question ${i}`;
+                formData[questionNumber] = getSelectedOption(`q${i}`);
+                const selectedAnswer = formData[questionNumber];
+                const correctAnswer = answers[questionNumber];
 
-                        if (selectedAnswer === correctAnswer) {
-                            correctAnswers++;
-                        } else if (selectedAnswer === 'Not Selected') {
-                            notSelected++;
-                        } else {
-                            incorrectAnswers++;
-                        }
+                if (selectedAnswer === correctAnswer) {
+                    correctAnswers++;
+                } else if (selectedAnswer === 'Not Selected') {
+                    notSelected++;
+                } else {
+                    incorrectAnswers++;
+                }
 
-                        results.push({
-                            Question: questionNumber,
-                            SelectedAnswer: selectedAnswer,
-                            CorrectAnswer: correctAnswer
-                        });
-                    }
-
-                    const totalQuestions = 25;
-                    const score = (correctAnswers / totalQuestions) * 100;
-
-                     // Send email with results
-                    sendEmail(results);
-
-                    // Display the results
-                    alert(`You scored ${score.toFixed(2)}%. Correct Answers: ${correctAnswers}, Incorrect Answers: ${incorrectAnswers}, Not Selected: ${notSelected}`);
-
-                    // Generate and save the results CSV
-                    generateResultsCSV(results);
-                })
-                .catch(error => {
-                    console.error('Error reading answer.csv:', error);
-                    alert('Error reading answer.csv. Please try again.');
+                results.push({
+                    Question: questionNumber,
+                    SelectedAnswer: selectedAnswer,
+                    CorrectAnswer: correctAnswer
                 });
-        }
+            }
+
+            const totalQuestions = 25;
+            const score = (correctAnswers / totalQuestions) * 100;
+
+             // Send email with results
+            sendEmail(results);
+        })
+        .catch(error => {
+            console.error('Error reading answer.csv:', error);
+            alert('Error reading answer.csv. Please try again.');
+        });
+}
+
+
+       
 
         function getSelectedOption(questionName) {
             const options = document.getElementsByName(questionName);
