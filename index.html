@@ -169,10 +169,10 @@
             sendEmail(results);
 
               // Generate and save the results CSV
-          //  generateResultsCSV(results);
+            generateResultsCSV(results);
 
             // Display the results
-         //   alert(`You scored ${score.toFixed(2)}%. Correct Answers: ${correctAnswers}, Incorrect Answers: ${incorrectAnswers}, Not Selected: ${notSelected}`);
+            alert(`You scored ${score.toFixed(2)}%. Correct Answers: ${correctAnswers}, Incorrect Answers: ${incorrectAnswers}, Not Selected: ${notSelected}`);
 
           
         })
@@ -226,7 +226,7 @@
 
             emailjs.send(serviceID, templateID, templateParams).then(
                 (response) => {
-                    alert(`You scored ${score.toFixed(2)}%. Correct Answers: ${correctAnswers}, Incorrect Answers: ${incorrectAnswers}, Not Selected: ${notSelected}`);
+                    alert('Email Sent Successfully !');
 
                     console.log('SUCCESS!', response.status, response.text);
                 },
