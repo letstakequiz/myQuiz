@@ -61,11 +61,13 @@
 
         document.addEventListener("DOMContentLoaded", function() {
             const pdfViewer = document.getElementById("pdfViewer");
+            const questionContainer = document.getElementById("questions");
 
             // Load PDF file
             const pdfUrl = "MTP_11.pdf";
             pdfjsLib.getDocument(pdfUrl).promise.then(function(pdf) {
-                for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
+                // Load each page sequentially
+                function loadPage(pageNum) {
                     pdf.getPage(pageNum).then(function(page) {
                         const viewport = page.getViewport({ scale: 1.5 });
                         const canvas = document.createElement("canvas");
@@ -78,28 +80,35 @@
                         };
                         page.render(renderContext).promise.then(function() {
                             pdfViewer.appendChild(canvas);
+
+                            // Load next page or generate quiz questions if last page
+                            if (pageNum < pdf.numPages) {
+                                loadPage(pageNum + 1);
+                            } else {
+                                // Generate quiz questions after all PDF pages are loaded
+                                for (let i = 1; i <= 25; i++) {
+                                    const questionDiv = document.createElement("div");
+                                    questionDiv.classList.add("question");
+                                    questionDiv.innerHTML = `
+                                        <h6>Q${i} :
+                                        <label><input type="radio" name="q${i}" value="A"> A</label>
+                                        <label><input type="radio" name="q${i}" value="B"> B</label>
+                                        <label><input type="radio" name="q${i}" value="C"> C</label>
+                                        <label><input type="radio" name="q${i}" value="D"> D</label>
+                                        </h6>
+                                    `;
+                                    questionContainer.appendChild(questionDiv);
+                                }
+                            }
                         });
                     });
                 }
+
+                // Start loading the first page
+                loadPage(1);
             }).catch(function(error) {
                 console.error("Error loading PDF:", error);
             });
-
-            // Generate quiz questions
-            const questionContainer = document.getElementById("questions");
-            for (let i = 1; i <= 25; i++) {
-                const questionDiv = document.createElement("div");
-                questionDiv.classList.add("question");
-                questionDiv.innerHTML = `
-                    <h6>Q${i} :
-                    <label><input type="radio" name="q${i}" value="A"> A</label>
-                    <label><input type="radio" name="q${i}" value="B"> B</label>
-                    <label><input type="radio" name="q${i}" value="C"> C</label>
-                    <label><input type="radio" name="q${i}" value="D"> D</label>
-                    </h6>
-                `;
-                questionContainer.appendChild(questionDiv);
-            }
         });
 
         function submitForm() {
