@@ -166,14 +166,27 @@
 
 
               // Send email with results
-            sendEmail(results);
+           // sendEmail(results);
 
               // Generate and save the results CSV
-            generateResultsCSV(results);
+           // generateResultsCSV(results);
 
             // Display the results
-            alert(`You scored ${score.toFixed(2)}%. Correct Answers: ${correctAnswers}, Incorrect Answers: ${incorrectAnswers}, Not Selected: ${notSelected}`);
+          //  alert(`You scored ${score.toFixed(2)}%. Correct Answers: ${correctAnswers}, Incorrect Answers: ${incorrectAnswers}, Not Selected: ${notSelected}`);
 
+     sendEmail(results).then(() => {
+   
+    // Display the results
+    alert(`You scored ${score.toFixed(2)}%. Correct Answers: ${correctAnswers}, Incorrect Answers: ${incorrectAnswers}, Not Selected: ${notSelected}`);
+
+         // Generate and save the results CSV
+    generateResultsCSV(results);
+
+         
+     }).catch(error => {
+    console.error('Error sending email:', error);
+    alert('Error sending email. Please try again.',error);
+});
           
         })
         .catch(error => {
