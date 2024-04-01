@@ -256,6 +256,8 @@
         emailjs.send(serviceID, templateID, templateParams).then(
             (response) => {
                 console.log('SUCCESS!', response.status, response.text);
+                 alert('Email Sent Successfully !');
+
                 resolve(); // Resolve the promise when email is sent successfully
             },
             (error) => {
