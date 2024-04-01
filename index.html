@@ -19,6 +19,11 @@
             overflow: auto; /* Enable scrolling for the PDF */
         }
 
+        #pdfCanvas {
+            display: block;
+            margin-bottom: 20px;
+        }
+
         #questionContainer {
             width: 30%;
             padding: 20px;
@@ -44,7 +49,7 @@
 </head>
 <body>
     <div id="pdfViewer">
-        <canvas id="pdfCanvas"></canvas>
+        <!-- PDF pages will be dynamically loaded here -->
     </div>
     <div id="questionContainer">
         <h3>OMR Sheet Response</h3>
@@ -60,74 +65,34 @@
         pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.8.335/pdf.worker.min.js';
 
         document.addEventListener("DOMContentLoaded", function() {
-            const questionContainer = document.getElementById("questions");
-
-            for (let i = 1; i <= 25; i++) {
-                const questionDiv = document.createElement("div");
-                questionDiv.classList.add("question");
-                questionDiv.innerHTML = `
-                    <h6>Q${i} :
-                    <label><input type="radio" name="q${i}" value="A"> A</label>
-                    <label><input type="radio" name="q${i}" value="B"> B</label>
-                    <label><input type="radio" name="q${i}" value="C"> C</label>
-                    <label><input type="radio" name="q${i}" value="D"> D</label>
-                    </h6>
-                `;
-                questionContainer.appendChild(questionDiv);
-            }
+            const pdfViewer = document.getElementById("pdfViewer");
 
             // Load PDF file
-            const pdfCanvas = document.getElementById("pdfCanvas");
             const pdfUrl = "MTP_11.pdf";
             pdfjsLib.getDocument(pdfUrl).promise.then(function(pdf) {
-                pdf.getPage(1).then(function(page) {
-                    const viewport = page.getViewport({ scale: 1.5 });
-                    pdfCanvas.height = viewport.height;
-                    pdfCanvas.width = viewport.width;
-                    const renderContext = {
-                        canvasContext: pdfCanvas.getContext('2d'),
-                        viewport: viewport
-                    };
-                    page.render(renderContext);
-                });
+                for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
+                    pdf.getPage(pageNum).then(function(page) {
+                        const viewport = page.getViewport({ scale: 1.5 });
+                        const canvas = document.createElement("canvas");
+                        const context = canvas.getContext('2d');
+                        canvas.height = viewport.height;
+                        canvas.width = viewport.width;
+                        const renderContext = {
+                            canvasContext: context,
+                            viewport: viewport
+                        };
+                        page.render(renderContext).promise.then(function() {
+                            pdfViewer.appendChild(canvas);
+                        });
+                    });
+                }
             }).catch(function(error) {
                 console.error("Error loading PDF:", error);
             });
         });
 
         function submitForm() {
-            const formData = {};
-
-            for (let i = 1; i <= 25; i++) {
-                formData[`Question ${i}`] = getSelectedOption(`q${i}`);
-            }
-
-            generateCSV(formData);
-        }
-
-        function getSelectedOption(name) {
-            const options = document.getElementsByName(name);
-            for (let i = 0; i < options.length; i++) {
-                if (options[i].checked) {
-                    return options[i].value;
-                }
-            }
-            return "Not Selected";
-        }
-
-        function generateCSV(data) {
-            const csvContent = "Question,Response\n" +
-                               Object.keys(data).map(key => `"${key}","${data[key]}"`).join("\n");
-
-            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-            const url = URL.createObjectURL(blob);
-            const link = document.createElement("a");
-            link.setAttribute("href", url);
-            link.setAttribute("download", "OMR_Responses.csv");
-            link.style.visibility = 'hidden';
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
+            // Your form submission logic here
         }
     </script>
 </body>
