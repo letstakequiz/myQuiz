@@ -55,6 +55,13 @@
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.8.335/pdf.min.js"></script>
+    <!-- Include EmailJS library -->
+<script src="https://cdn.jsdelivr.net/npm/emailjs-com@2.6.0/dist/email.min.js"></script>
+<script>
+    // Initialize EmailJS with your user ID
+    emailjs.init('gvs.bunny@gmail.com');
+</script>
+
     <script>
         // Specify worker source
         pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.8.335/pdf.worker.min.js';
