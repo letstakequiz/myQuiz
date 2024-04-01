@@ -180,7 +180,7 @@
                 to_name: "Girish",
                 message: `You scored ${score.toFixed(2)}%. Incorrect Answers: ${incorrectResponses.map(response => response.Question).join(", ")}`,
                 reply_to: "gvs.bunny@gmail.com",
-                email: document.getElementById("email").value
+                email: "gvs.bunny@gmail.com"
             }).then(
                 function(response) {
                     console.log("Email sent successfully:", response);
