@@ -112,12 +112,14 @@
         });
 
         function submitForm() {
+            console.log("Submit Form :");
     const formData = {};
     let correctAnswers = 0;
     let incorrectAnswers = 0;
     let notSelected = 0;
 
     // Fetch the answer CSV file
+             console.log("Submit Form Fetch :");
     fetch('answer.csv')
         .then(response => response.text())
         .then(data => {
@@ -125,6 +127,7 @@
             console.log(data);
             const rows = data.split('\n');
             const answers = {};
+             console.log("Submit Form rows:");
             rows.forEach(row => {
                 const [question, answer] = row.split(',');
                 if (question && answer) {
