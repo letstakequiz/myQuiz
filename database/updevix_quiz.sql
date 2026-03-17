@@ -41,7 +41,7 @@ CREATE TABLE `admin` (
 
 -- Insert default admin (password: Admin@123)
 INSERT INTO `admin` (`username`, `email`, `password`, `full_name`) VALUES
-('admin', 'admin@updevix.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'Super Admin');
+('admin', 'admin@updevix.com', '$2y$12$8iPsOyJOQUMv1JckK5TBp.IwgK9zmvpbQ/UCEonPGs3XsJvhY3nja', 'Super Admin');
 
 -- --------------------------------------------------------
 -- Table: quizzes
